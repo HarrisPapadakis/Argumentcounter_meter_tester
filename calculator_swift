@@ -1,0 +1,17 @@
+import Foundation
+
+// Συνάρτηση για υπολογισμό αθροίσματος
+func calculateSum(of numbers: [Int]) -> Int {
+    var sum = 0
+    for number in numbers {
+        sum += number
+    }
+    return sum
+}
+
+// Παράδειγμα πίνακα αριθμών
+let numbers = [1, 2, 3, 4, 5]
+
+// Κλήση της συνάρτησης και εμφάνιση του αποτελέσματος
+let sum = calculateSum(of: numbers)
+print("Το άθροισμα είναι: \(sum)")

@@ -1,4 +1,6 @@
-cars = ["suzuki", "seat", "ford", "toyota", "bmw", "mercedes"]
+#This program uses "for" and "in" operator
+
+cars = ["suzuki", "seat", "ford", "toyota", "bmw", "mercedes"] # create a list with given values
 
 for car in cars:
     if car == "bmw":

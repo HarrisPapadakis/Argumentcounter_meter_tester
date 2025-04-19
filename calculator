@@ -1,0 +1,34 @@
+def add(x, y):
+    return x + y
+
+def subtract(x, y):
+    return x - y
+
+def multiply(x, y):
+    return x * y
+
+def divide(x, y):
+    if y == 0:
+        return "Δεν γίνεται διαίρεση με το μηδέν"
+    return x / y
+
+print("Επιλογές:")
+print("1. Πρόσθεση")
+print("2. Αφαίρεση")
+print("3. Πολλαπλασιασμός")
+print("4. Διαίρεση")
+
+choice = input("Δώσε επιλογή (1/2/3/4): ")
+num1 = float(input("Δώσε τον πρώτο αριθμό: "))
+num2 = float(input("Δώσε τον δεύτερο αριθμό: "))
+
+if choice == '1':
+    print("Αποτέλεσμα:", add(num1, num2))
+elif choice == '2':
+    print("Αποτέλεσμα:", subtract(num1, num2))
+elif choice == '3':
+    print("Αποτέλεσμα:", multiply(num1, num2))
+elif choice == '4':
+    print("Αποτέλεσμα:", divide(num1, num2))
+else:
+    print("Μη έγκυρη επιλογή")

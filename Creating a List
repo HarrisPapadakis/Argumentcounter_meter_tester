@@ -1,0 +1,7 @@
+famous_people = ["Albert Einstein", "William Shakespeare", "Marie Curie", "Isaac Newton", "Ada Lovelace"]
+
+first_person = famous_people[0]
+third_person = famous_people[2]
+
+print(first_person)  # Output: Albert Einstein
+print(third_person)  # Output: Marie Curie

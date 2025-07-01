@@ -1,4 +1,4 @@
-def my_function():
+0def my_function():
     return "Hello, Python!"
 
 print("This line is always executed")

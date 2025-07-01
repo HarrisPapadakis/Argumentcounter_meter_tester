@@ -1,0 +1,9 @@
+def my_function():
+    return "Hello, Python!"
+
+print("This line is always executed")
+
+if __name__ == "__main__":
+    print("sample_script.py is being run directly")
+else:
+    print("sample_script.py is being imported into another module")

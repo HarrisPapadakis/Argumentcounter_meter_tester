@@ -7,3 +7,4 @@ print("The options for the buffet for the first two weeks of each month are:")
 # Loop through the tuple and print each breakfast option
 for breakfast in  morning_buffet:
     print(breakfast)
+    

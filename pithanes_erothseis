@@ -1,0 +1,28 @@
+import random
+
+# Πιθανές ερωτήσεις και απαντήσεις
+possible_answers = [
+    "Ναι, σίγουρα.",
+    "Όχι, καθόλου.",
+    "Ίσως.",
+    "Ρώτα με αργότερα.",
+    "Δεν είμαι σίγουρο.",
+    "Φυσικά!",
+    "Καμία πιθανότητα.",
+    "Μπορεί να συμβεί.",
+    "Δεν μπορώ να απαντήσω τώρα."
+]
+
+def answer_question():
+    question = input("Κάνε την ερώτησή σου: ")
+    if question.strip() == "":
+        print("Δεν έκανες ερώτηση!")
+    else:
+        print("Απάντηση:", random.choice(possible_answers))
+
+# Εκκίνηση
+while True:
+    answer_question()
+    cont = input("Θες να κάνεις άλλη ερώτηση; (ν/ο): ")
+    if cont.lower() != 'ν':
+        break

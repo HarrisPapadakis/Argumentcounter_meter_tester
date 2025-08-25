@@ -1,0 +1,33 @@
+print("Welcome to the rollercoaster!")
+
+total_bill = 0
+num_people = int(input("How many people are riding? "))
+
+for i in range(num_people):
+    print(f"\nPerson {i+1}:")
+    height = int(input("What is your height in cm? "))
+
+    if height >= 120:
+        print("You can ride the rollercoaster!")
+        age = int(input("What is your age? "))
+        birthday = input("Is it your birthday today? (yes/no): ").lower()
+
+        if birthday == "yes":
+            print("Happy Birthday! Your ride is free!")
+            price = 0
+        else:
+            if age < 12:
+                price = 5
+            elif age <= 18:
+                price = 7
+            elif age > 60:
+                price = 6  # Έκπτωση για ηλικιωμένους
+            else:
+                price = 12
+
+        print(f"Ticket price for this person: ${price}")
+        total_bill += price
+    else:
+        print("Sorry, you have to grow taller before you can ride.")
+
+print(f"\nTotal cost for all riders: ${total_bill}")

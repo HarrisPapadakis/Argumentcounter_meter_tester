@@ -3,68 +3,168 @@ import speech_recognition as sr
 import datetime
 import os
 import wikipedia
-import pywhatkit 
+import pywhatkit
+import pyautogui
 
-engine = pyttsx3.init('sapi5')
+# ------------------- Ρύθμιση Φωνής -------------------
+engine = pyttsx3.init()
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
 
-def speak(audio):
-    engine.say(audio)
+# Διάλεξε ελληνική φωνή αν υπάρχει
+selected_voice = voices[0].id
+for v in voices:
+    if "Greek" in v.name or "Ελληνικά" in v.name:
+        selected_voice = v.id
+        break
+engine.setProperty('voice', selected_voice)
+
+def speak(text):
+    engine.say(text)
     engine.runAndWait()
 
-def commands():
+def respond(text):
+    print(f"Jarvis: {text}")
+    speak(text)
+
+# ------------------- Αναγνώριση Ομιλίας -------------------
+def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...............................")
+        respond("Ακούω...")
         r.pause_threshold = 1
         r.adjust_for_ambient_noise(source, duration=1)
         audio = r.listen(source)
 
     try:
-        print("Wait for a few moments.....")
-        query = r.recognize_google(audio, language='en-US')
-        query = query.lower()
-        print(f"You just said: {query}\n")
-    except Exception as e: 
-        print("Error:", e)
-        speak("Please tell me again")
-        query = "none"
-    return query
-
-def wishings():
-    hour = int(datetime.datetime.now().hour)
-    if hour >= 0 and hour < 12:
-        print("Good Morning Boss")
-        speak("Good Morning Boss")
-    elif hour >= 12 and hour < 17:
-        print("Good Afternoon Boss")
-        speak("Good Afternoon Boss")
-    elif hour >= 17 and hour < 21:
-        print("Good Evening Boss")
-        speak("Good Evening Boss")
-    else:
-        print("Good Night Boss")
-        speak("Good Night Boss")
-
-if __name__ == "__main__":
-    wishings()
-    query = commands().lower()
-    if 'time' in query:
-        strTime = datetime.datetime.now().strftime("%H:%M:%S")
-        print(strTime)
-        speak(f"Sir, the time is {strTime}")
-    elif 'open Edge' in query:
-        speak("Opening  Microsoft Edge Application  sir...")
-        os.startfile("C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe")
-    elif'open Wikipedia' in query:
-        speak("Searching in  Wikipedia sir..")
+        # Προσπάθησε πρώτα ελληνικά
+        query = r.recognize_google(audio, language='el-GR')
+    except:
         try:
-                query = query.replace("wikipedia","")
-                results = wikipedia.summary(query,sentences=1)
-                speak("According to Wikipedia,")
-                print(results)
-                speak(results)
+            # Αν αποτύχει, δοκίμασε αγγλικά
+            query = r.recognize_google(audio, language='en-US')
         except:
-                speak("No results found...")
-                print("No results found..")
+            respond("Δεν κατάλαβα, επανέλαβε παρακαλώ.")
+            return "none"
+
+    print(f"Εσύ: {query}")
+    return query.lower()
+
+# ------------------- Χαιρετισμός -------------------
+def wish_user():
+    hour = int(datetime.datetime.now().hour)
+    if hour < 12:
+        respond("Καλημέρα Αφεντικό!")
+    elif hour < 18:
+        respond("Καλό απόγευμα Αφεντικό!")
+    else:
+        respond("Καλησπέρα Αφεντικό!")
+
+# ------------------- Διάλογος -------------------
+def chatbot_response(query):
+    if "πώς σε λένε" in query or "your name" in query:
+        return "Με λένε Τζάρβις, ο προσωπικός σου βοηθός."
+    elif "πώς είσαι" in query or "how are you" in query:
+        return "Είμαι καλά και έτοιμος να βοηθήσω!"
+    elif "τι κάνεις" in query:
+        return "Μιλάω μαζί σου και περιμένω εντολές."
+    elif "ώρα" in query or "time" in query:
+        return f"Η ώρα είναι {datetime.datetime.now().strftime('%H:%M')}"
+    elif "ποιος σε έφτιαξε" in query or "who created you" in query:
+        return "Με δημιούργησε ο προγραμματιστής σου."
+    elif "ευχαριστώ" in query or "thanks" in query:
+        return "Παρακαλώ, χαρά μου!"
+    else:
+        return "Δεν είμαι σίγουρος για αυτό. Θέλεις να το ψάξω στο διαδίκτυο;"
+
+# ------------------- Κύριο Πρόγραμμα -------------------
+if __name__ == "__main__":
+    wish_user()
+
+    while True:
+        query = listen()
+
+        if query == "none":
+            continue
+
+        # ---------- Έξοδος ----------
+        if "τέρμα" in query or "έξοδος" in query or "quit" in query or "bye jarvis" in query:
+            respond("Αντίο, τερματίζω τη λειτουργία.")
+            break
+
+        # ---------- Χρόνος ----------
+        elif "ώρα" in query or "time" in query:
+            strTime = datetime.datetime.now().strftime("%H:%M")
+            respond(f"Η ώρα είναι {strTime}")
+
+        # ---------- Wikipedia ----------
+        elif "wikipedia" in query:
+            respond("Αναζητώ στη Wikipedia...")
+            try:
+                topic = query.replace("wikipedia", "").strip()
+                results = wikipedia.summary(topic, sentences=2)
+                respond("Σύμφωνα με τη Wikipedia:")
+                respond(results)
+            except:
+                respond("Δεν βρήκα αποτελέσματα στη Wikipedia.")
+
+        # ---------- YouTube ----------
+        elif "youtube" in query:
+            respond("Ανοίγω το YouTube...")
+            term = query.replace("youtube", "").strip()
+            pywhatkit.playonyt(term)
+
+        # ---------- Εφαρμογές ----------
+        elif "άνοιξε edge" in query or "open edge" in query:
+            respond("Ανοίγω τον Edge...")
+            os.startfile("C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe")
+
+        elif "άνοιξε σημειωματάριο" in query or "open notepad" in query:
+            respond("Ανοίγω το Σημειωματάριο...")
+            os.system("notepad")
+
+        elif "άνοιξε υπολογιστή" in query or "open calculator" in query:
+            respond("Ανοίγω τον Υπολογιστή...")
+            os.system("calc")
+
+        elif "άνοιξε εξερευνητή" in query or "open explorer" in query:
+            respond("Ανοίγω τον Εξερευνητή...")
+            os.system("explorer")
+
+        elif "άνοιξε spotify" in query or "open spotify" in query:
+            respond("Ανοίγω το Spotify...")
+            try:
+                os.startfile("C:\\Users\\YourUser\\AppData\\Roaming\\Spotify\\Spotify.exe")
+            except:
+                respond("Δεν βρήκα το Spotify στον υπολογιστή.")
+
+        # ---------- Χειρισμός παραθύρων ----------
+        elif "enter" in query:
+            respond("Πατάω enter")
+            pyautogui.press("enter")
+
+        elif "minimize" in query:
+            respond("Μικραίνω το παράθυρο")
+            pyautogui.hotkey("win", "down")
+
+        elif "maximize" in query:
+            respond("Μεγιστοποιώ το παράθυρο")
+            pyautogui.hotkey("win", "up")
+
+        # ---------- Τερματισμός / Επανεκκίνηση ----------
+        elif "κλείσε υπολογιστή" in query or "shutdown" in query:
+            respond("Κλείνω τον υπολογιστή...")
+            os.system("shutdown /s /t 1")
+
+        elif "επανεκκίνηση" in query or "restart" in query:
+            respond("Επανεκκινώ τον υπολογιστή...")
+            os.system("shutdown /r /t 1")
+
+        elif "αποσύνδεση" in query or "log out" in query:
+            respond("Κάνω αποσύνδεση...")
+            os.system("shutdown /l")
+
+        # ---------- Διάλογος ----------
+        else:
+            answer = chatbot_response(query)
+            respond(answer)
+
